@@ -6,7 +6,8 @@ PROGRAM_NAME = 'CEP-o-matic'
 VERSION = '1.0'
 LOG_FILENAME = f"P3Flog_{time.strftime('%Y%m%d-%H%M%S')}.txt"
 
-# Proper file names
+# Proper file and directory names
+SETUPDIR_NAME = 'P3F Mods\\Setup'
 ISO_NAME = 'P3F.iso'
 SLUS_NAME = 'SLUS_216.21'
 ELF_NAME = 'SLUS_216.21.elf'
@@ -66,9 +67,9 @@ PROGRAM START
 log.info(f'P3F {PROGRAM_NAME} {VERSION}\nby Pixelguin\n')
 
 # Check if executable is in the right place
-if not SETUP_DIR.endswith('P3F Mods\\Setup'):
+if not SETUP_DIR.endswith(SETUPDIR_NAME):
     log.debug(f'{PROGRAM_NAME} is in {SETUP_DIR}')
-    fatal_error(f'It looks like {PROGRAM_NAME} isn\'t in the correct directory.\nMake sure this executable is in your P3F Mods\\Setup folder.\n')
+    fatal_error(f'It looks like {PROGRAM_NAME} isn\'t in the correct directory.\nMake sure this executable is in your {SETUPDIR_NAME} folder.\n')
 
 for file in os.listdir(SETUP_DIR):
     # iso
@@ -90,7 +91,7 @@ for file in os.listdir(SETUP_DIR):
                 force_rename(file, ISO_NAME)
             
             # Extract SLUS
-            log.info('Extracting SLUS_216_21...')
+            log.info(f'Extracting {SLUS_NAME}...')
             subprocess.check_call(f'{TOOLS_DIR}\\7z.exe x -y {ISO_NAME} {SLUS_NAME}', stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
             # Rename SLUS to the filename P3F CEP expects
@@ -122,6 +123,7 @@ for file in os.listdir(SETUP_DIR):
         # Get filename without extension
         bios_name = pathlib.Path(file).stem
 
+        # Find other BIOS files with the same filename
         for otherfile in os.listdir(SETUP_DIR):
             if otherfile.startswith(bios_name) and otherfile != file:
                 log.info(f'Found {otherfile}')
@@ -134,30 +136,31 @@ for file in os.listdir(SETUP_DIR):
 if found_iso == True and found_bios != 'none':
     # Empty BIOS folder
     if os.listdir(BIOS_DIR):
-        log.info('Emptying P3F Mods\\Files\\bios folder...')
+        log.info(f'Emptying {BIOS_DIR}...')
         files = glob.glob(f'{BIOS_DIR}\\*')
         for f in files:
             os.remove(f)
-            log.debug(f'Deleted {f} in bios folder')
+            log.debug(f'Deleted {f}')
 
     # iso
-    log.info(f'Moving {ISO_NAME} to P3F Mods\\Files\\iso folder...')
-    shutil.move(f'{SETUP_DIR}\\{ISO_NAME}', f'{ISO_DIR}\\{ISO_NAME}')
+    log.info(f'Moving {ISO_NAME} to {ISO_DIR}...')
+    shutil.move(f'{SETUP_DIR}\\{ISO_NAME}', f'{ISO_DIR}\\{ISO_NAME}') # Using move with the exact file path overwrites existing file
 
     # elf
-    log.info(f'Moving {ELF_NAME} to P3F Mods\\Files\\elf folder...')
+    log.info(f'Moving {ELF_NAME} to {ELF_DIR}...')
     shutil.move(f'{SETUP_DIR}\\{ELF_NAME}', f'{ELF_DIR}\\{ELF_NAME}')
 
     # bin
     if found_bios.endswith('.bin'):
-        log.info('Moving packaged BIOS to P3F Mods\\Files\\bios folder...')
+        log.info(f'Moving packaged {found_bios} to {BIOS_DIR}...')
         shutil.move(f'{SETUP_DIR}\\{found_bios}', f'{BIOS_DIR}\\{found_bios}')
     # mec
     else:
-        log.info('Moving loose BIOS to P3F Mods\\Files\\bios folder...')
+        log.info(f'Moving loose BIOS {found_bios} to {BIOS_DIR}...')
         for movefile in os.listdir(SETUP_DIR):
             if movefile.startswith(found_bios):
                 shutil.move(f'{SETUP_DIR}\\{movefile}', f'{BIOS_DIR}\\{movefile}')
+                log.debug(f'Moved {movefile}')
 else:
     if found_iso != True:
         log.error('Missing Persona 3 FES ISO file!')
