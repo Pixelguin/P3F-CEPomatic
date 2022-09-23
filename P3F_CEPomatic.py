@@ -11,6 +11,15 @@ ISO_NAME = 'P3F.iso'
 SLUS_NAME = 'SLUS_216.21'
 ELF_NAME = 'SLUS_216.21.elf'
 
+# Set directory paths
+SETUP_DIR = os.getcwd()
+TOOLS_DIR = SETUP_DIR + '\\dependencies'
+
+FILES_DIR = os.path.dirname(SETUP_DIR) + '\\Files'
+ISO_DIR = FILES_DIR + '\\iso'
+ELF_DIR = FILES_DIR + '\\elf'
+BIOS_DIR = FILES_DIR + '\\bios'
+
 # Create logger
 log = logging.getLogger('logger')
 log.setLevel(logging.DEBUG)
@@ -33,11 +42,6 @@ log.debug('Created ' + LOG_FILENAME + '\n')
 # Set flags
 found_iso = False
 found_bios = 'none'
-
-# Set directory paths
-SETUP_DIR = os.getcwd()
-FILES_DIR = os.path.dirname(SETUP_DIR) + '\\Files'
-TOOLS_DIR = SETUP_DIR + '\\dependencies'
 
 def force_rename(old_name, new_name):
     '''
@@ -128,31 +132,31 @@ for file in os.listdir(SETUP_DIR):
 # Check flags and move files
 if found_iso == True and found_bios != 'none':
     # Empty BIOS folder
-    if os.listdir(FILES_DIR + '\\bios'):
+    if os.listdir(BIOS_DIR):
         log.info('Emptying P3F Mods\\Files\\bios folder...')
-        files = glob.glob(FILES_DIR + '\\bios\\*')
+        files = glob.glob(BIOS_DIR + '\\*')
         for f in files:
             os.remove(f)
             log.debug('Deleted ' + f + ' in bios folder')
 
     # iso
     log.info('Moving ' + ISO_NAME + ' to P3F Mods\\Files\\iso folder...')
-    shutil.move(SETUP_DIR + '\\' + ISO_NAME, FILES_DIR + '\\iso\\' + ISO_NAME)
+    shutil.move(SETUP_DIR + '\\' + ISO_NAME, ISO_DIR + '\\' + ISO_NAME)
 
     # elf
     log.info('Moving ' + ELF_NAME + ' to P3F Mods\\Files\\elf folder...')
-    shutil.move(SETUP_DIR + '\\' + ELF_NAME, FILES_DIR + '\\elf\\' + ELF_NAME)
+    shutil.move(SETUP_DIR + '\\' + ELF_NAME, ELF_DIR + '\\' + ELF_NAME)
 
     # bin
     if found_bios.endswith('.bin'):
         log.info('Moving packaged BIOS to P3F Mods\\Files\\bios folder...')
-        shutil.move(SETUP_DIR + '\\' + found_bios, FILES_DIR + '\\bios\\' + found_bios)
+        shutil.move(SETUP_DIR + '\\' + found_bios, BIOS_DIR + '\\' + found_bios)
     # mec
     else:
         log.info('Moving loose BIOS to P3F Mods\\Files\\bios folder...')
         for movefile in os.listdir(SETUP_DIR):
             if movefile.startswith(found_bios):
-                shutil.move(SETUP_DIR + '\\' + movefile, FILES_DIR + '\\bios\\' + movefile)
+                shutil.move(SETUP_DIR + '\\' + movefile, BIOS_DIR + '\\' + movefile)
 else:
     if found_iso != True:
         log.error('Missing Persona 3 FES ISO file!')
