@@ -3,7 +3,7 @@ from simple_file_checksum import get_checksum
 #os.chdir(os.path.dirname(os.path.abspath(__file__))) # Debug - set working directory to the .py file's location
 
 PROGRAM_NAME = 'CEP-o-matic'
-VERSION = '1.0'
+VERSION = '1.1'
 LOG_FILENAME = f"P3Flog_{time.strftime('%Y%m%d-%H%M%S')}.txt"
 
 # Proper file and directory names
