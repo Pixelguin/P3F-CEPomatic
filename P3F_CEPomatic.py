@@ -67,6 +67,7 @@ log.info(f'P3F {PROGRAM_NAME} {VERSION}\nby Pixelguin\n')
 
 # Check if executable is in the right place
 if not SETUP_DIR.endswith('P3F Mods\\Setup'):
+    log.debug(f'{PROGRAM_NAME} is in {SETUP_DIR}')
     fatal_error(f'It looks like {PROGRAM_NAME} isn\'t in the correct directory.\nMake sure this executable is in your P3F Mods\\Setup folder.\n')
 
 for file in os.listdir(SETUP_DIR):
