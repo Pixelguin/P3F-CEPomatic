@@ -25,16 +25,17 @@ BIOS_DIR = f'{FILES_DIR}\\bios'
 log = logging.getLogger('logger')
 log.setLevel(logging.DEBUG)
 
-formatter = logging.Formatter('%(message)s')
+file_formatter = logging.Formatter('>%(levelname)-10s %(message)s') # Show level in log file but not console
+console_formatter = logging.Formatter('%(message)s')
 
 file_handler = logging.FileHandler(LOG_FILENAME, mode = 'w', encoding = 'utf-8')
 file_handler.setLevel(logging.DEBUG)
-file_handler.setFormatter(formatter)
+file_handler.setFormatter(file_formatter)
 log.addHandler(file_handler)
 
 console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.INFO)
-console_handler.setFormatter(formatter)
+console_handler.setFormatter(console_formatter)
 log.addHandler(console_handler)
 
 # First log message
