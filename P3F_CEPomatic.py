@@ -1,4 +1,4 @@
-import logging, os, pathlib, shutil, subprocess, sys, time
+import glob, logging, os, pathlib, shutil, subprocess, sys, time
 from simple_file_checksum import get_checksum
 #os.chdir(os.path.dirname(os.path.abspath(__file__))) # Debug - set working directory to the .py file's location
 
@@ -127,6 +127,14 @@ for file in os.listdir(SETUP_DIR):
 
 # Check flags and move files
 if found_iso == True and found_bios != 'none':
+    # Empty BIOS folder
+    if os.listdir(FILES_DIR + '\\bios'):
+        log.info('Emptying P3F Mods\\Files\\bios folder...')
+        files = glob.glob(FILES_DIR + '\\bios\\*')
+        for f in files:
+            os.remove(f)
+            log.debug('Deleted ' + f + ' in bios folder')
+
     # iso
     log.info('Moving ' + ISO_NAME + ' to P3F Mods\\Files\\iso folder...')
     shutil.move(SETUP_DIR + '\\' + ISO_NAME, FILES_DIR + '\\iso\\' + ISO_NAME)
