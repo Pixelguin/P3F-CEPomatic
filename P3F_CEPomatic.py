@@ -20,6 +20,7 @@ FILES_DIR = f'{os.path.dirname(SETUP_DIR)}\\Files'
 ISO_DIR = f'{FILES_DIR}\\iso'
 ELF_DIR = f'{FILES_DIR}\\elf'
 BIOS_DIR = f'{FILES_DIR}\\bios'
+MEMCARDS_DIR = f'{FILES_DIR}\\memcards'
 
 # Create logger
 log = logging.getLogger('logger')
@@ -132,6 +133,14 @@ for file in os.listdir(SETUP_DIR):
         # Set found_bios flag
         log.info('Loose BIOS files found!\n')
         found_bios = bios_name
+
+    # ps2
+    elif file.endswith('.ps2'):
+        log.info(f'Found {file}')
+
+        # Move into memcards folder
+        log.info(f'Moving memcard {file} to {MEMCARDS_DIR}...\n')
+        shutil.move(f'{SETUP_DIR}\\{file}', f'{MEMCARDS_DIR}\\{file}') # Using move with the exact file path overwrites existing file
 
 # Check flags and move files
 if found_iso == True and found_bios != 'none':
