@@ -5,7 +5,6 @@ from simple_file_checksum import get_checksum
 
 PROGRAM_NAME = 'CEP-o-matic'
 VERSION = '1.2.1'
-LOG_FILENAME = f"P3Flog_{time.strftime('%Y%m%d-%H%M%S')}.txt"
 
 # Proper file and directory names
 SETUPDIR_NAME = Path('P3F Mods/Setup/')
@@ -16,6 +15,9 @@ ELF_NAME = 'SLUS_216.21.elf'
 # Set directory paths
 SETUP_DIR = Path(os.getcwd())
 TOOLS_DIR = SETUP_DIR / 'dependencies'
+
+LOGS_DIR = SETUP_DIR.parents[0] / 'Logs/'
+LOGS_FILE = LOGS_DIR / f"CEPomaticLog_{time.strftime('%Y%m%d-%H%M%S')}.txt"
 
 FILES_DIR = SETUP_DIR.parents[0] / 'Files/'
 ISO_DIR = FILES_DIR / 'iso/'
@@ -30,7 +32,7 @@ log.setLevel(logging.DEBUG)
 file_formatter = logging.Formatter('>%(levelname)-10s %(message)s') # Show level in log file but not console
 console_formatter = logging.Formatter('%(message)s')
 
-file_handler = logging.FileHandler(LOG_FILENAME, mode = 'w', encoding = 'utf-8')
+file_handler = logging.FileHandler(LOGS_FILE, mode = 'w', encoding = 'utf-8')
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(file_formatter)
 log.addHandler(file_handler)
@@ -41,7 +43,7 @@ console_handler.setFormatter(console_formatter)
 log.addHandler(console_handler)
 
 # First log message
-log.debug(f'Created {LOG_FILENAME}\n')
+log.debug(f'Created {LOGS_FILE}\n')
 
 # Set flags
 found_iso = False
@@ -60,7 +62,7 @@ def force_rename(old_name, new_name):
         os.rename(old_name, new_name)
 
 def fatal_error(message):
-    log.critical(f'{message}\n{LOG_FILENAME} may have more information.\n')
+    log.critical(f'{message}\nA log is available at {LOGS_FILE}.\n')
     input('Press Enter to end the program...')
     sys.exit()
 
