@@ -59,10 +59,37 @@ log.debug(f'Created {LOGS_FILE}\n')
 found_iso = False
 found_bios = 'none'
 
+def fatal_error(message):
+    '''
+    Output a critical error message and the log file path, then end the program.
+
+    This function outputs a critical error message to the console and log along with a path to the console log file.
+    It then prompts the user to press Enter, which ends the program.
+
+    Args:
+        message (str): The critical error message to output.
+
+    Returns:
+        None
+    '''
+        
+    log.critical(f'{message}\nA log is available at {LOGS_FILE}.\n')
+    input('Press Enter to end the program...')
+    exit()
+
 def force_rename(old_name, new_name):
     '''
-    Tries to rename a file.
-    If FileExistsError is caught, the existing file is deleted to ensure renaming can occur.
+    Rename a file - if a file with the new name already exists, delete it first.
+
+    This function tries to rename a given file with a given new name.
+    If FileExistsError is caught, the existing file with the new name is deleted and the rename command is run again.
+
+    Args:
+        old_name(str/Path): The path to the file to be renamed
+        new_name(str): The new name for the file
+
+    Returns:
+        None
     '''
 
     try:
@@ -74,6 +101,16 @@ def force_rename(old_name, new_name):
 def get_checksum(file):
     '''
     Reads a file in 1MB chunks and returns its xxh3_64 checksum.
+
+    This function reads in a file in 1MB chunks (an appropriate chunk size for a 4GB file on a system with 4GB+ RAM).
+    While reading, it calculates the xxh3_64 hash of the file.
+    Then, it returns its hexdigest - a hexadecimal checksum.
+
+    Args:
+        file(str): The path to the file to get the checksum of
+
+    Returns:
+        str: The xxh3_64 hexadecimal checksum of the file
     '''
 
     with open(file, 'rb') as f:
@@ -81,11 +118,6 @@ def get_checksum(file):
         while chunk := f.read(1024 * 1024):
             file_hash.update(chunk)
     return file_hash.hexdigest()
-
-def fatal_error(message):
-    log.critical(f'{message}\nA log is available at {LOGS_FILE}.\n')
-    input('Press Enter to end the program...')
-    exit()
 
 '''
 PROGRAM START
