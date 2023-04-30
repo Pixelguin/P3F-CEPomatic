@@ -132,7 +132,7 @@ if not SETUP_DIR.parents[1] / SETUPDIR_NAME == SETUP_DIR:
 # Scan for files
 for file in os.listdir(SETUP_DIR):
     # iso
-    if file.endswith('.iso') and found_iso == False:
+    if file.lower().endswith('.iso') and found_iso == False:
         log.info(f'Found {file}')
 
         # Validate P3F disc checksum
