@@ -1,6 +1,13 @@
-import logging, os, shutil, subprocess, sys, time
+# Native libraries
+import logging, os, subprocess
 from pathlib import Path
+from shutil import move
+from sys import exit
+from time import strftime
+
+# External libraries
 from xxhash import xxh3_64
+
 #os.chdir(os.path.dirname(os.path.abspath(__file__))) # Debug - set working directory to the .py file's location
 
 PROGRAM_NAME = 'CEP-o-matic'
@@ -20,7 +27,7 @@ SETUP_DIR = Path(os.getcwd())
 TOOLS_DIR = SETUP_DIR / 'dependencies'
 
 LOGS_DIR = SETUP_DIR.parents[0] / 'Logs/'
-LOGS_FILE = LOGS_DIR / f"CEPomaticLog_{time.strftime('%Y%m%d-%H%M%S')}.txt"
+LOGS_FILE = LOGS_DIR / f"CEPomaticLog_{strftime('%Y%m%d-%H%M%S')}.txt"
 
 FILES_DIR = SETUP_DIR.parents[0] / 'Files/'
 ISO_DIR = FILES_DIR / 'iso/'
@@ -78,7 +85,7 @@ def get_checksum(file):
 def fatal_error(message):
     log.critical(f'{message}\nA log is available at {LOGS_FILE}.\n')
     input('Press Enter to end the program...')
-    sys.exit()
+    exit()
 
 '''
 PROGRAM START
@@ -158,7 +165,7 @@ for file in os.listdir(SETUP_DIR):
 
         # Move into memcards folder
         log.info(f'Moving memcard {file} to {MEMCARDS_DIR}...\n')
-        shutil.move(SETUP_DIR / file, MEMCARDS_DIR / file) # Using move with the exact file path overwrites existing file
+        move(SETUP_DIR / file, MEMCARDS_DIR / file) # Using move with the exact file path overwrites existing file
 
 # Check flags and move files
 if found_iso == True and found_bios != 'none':
@@ -171,22 +178,22 @@ if found_iso == True and found_bios != 'none':
 
     # iso
     log.info(f'Moving {ISO_NAME} to {ISO_DIR}...')
-    shutil.move(SETUP_DIR / ISO_NAME, ISO_DIR / ISO_NAME) # Using move with the exact file path overwrites existing file
+    move(SETUP_DIR / ISO_NAME, ISO_DIR / ISO_NAME) # Using move with the exact file path overwrites existing file
 
     # elf
     log.info(f'Moving {ELF_NAME} to {ELF_DIR}...')
-    shutil.move(SETUP_DIR / ELF_NAME, ELF_DIR / ELF_NAME)
+    move(SETUP_DIR / ELF_NAME, ELF_DIR / ELF_NAME)
 
     # bin
     if found_bios.endswith('.bin'):
         log.info(f'Moving packaged {found_bios} to {BIOS_DIR}...')
-        shutil.move(SETUP_DIR / found_bios, BIOS_DIR / found_bios)
+        move(SETUP_DIR / found_bios, BIOS_DIR / found_bios)
     # mec
     else:
         log.info(f'Moving loose BIOS {found_bios} to {BIOS_DIR}...')
         for movefile in os.listdir(SETUP_DIR):
             if movefile.startswith(found_bios):
-                shutil.move(SETUP_DIR / movefile, BIOS_DIR / movefile)
+                move(SETUP_DIR / movefile, BIOS_DIR / movefile)
                 log.debug(f'Moved {movefile}')
 else:
     if found_iso != True:
@@ -198,4 +205,4 @@ else:
 # Finished
 log.info('\nAll finished!')
 input('Press Enter to end the program...')
-sys.exit()
+exit()
