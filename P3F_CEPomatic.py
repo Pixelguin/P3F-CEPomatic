@@ -1,6 +1,6 @@
 import logging, os, shutil, subprocess, sys, time
 from pathlib import Path
-from simple_file_checksum import get_checksum
+from xxhash import xxh3_64
 #os.chdir(os.path.dirname(os.path.abspath(__file__))) # Debug - set working directory to the .py file's location
 
 PROGRAM_NAME = 'CEP-o-matic'
@@ -11,6 +11,9 @@ SETUPDIR_NAME = Path('P3F Mods/Setup/')
 ISO_NAME = 'P3F.iso'
 SLUS_NAME = 'SLUS_216.21'
 ELF_NAME = 'SLUS_216.21.elf'
+
+# Disc checksum
+ISO_CHECKSUM = '94a81c7c5f0d255c'
 
 # Set directory paths
 SETUP_DIR = Path(os.getcwd())
@@ -61,6 +64,17 @@ def force_rename(old_name, new_name):
         os.remove(new_name)
         os.rename(old_name, new_name)
 
+def get_checksum(file):
+    '''
+    Reads a file in 1MB chunks and returns its xxh3_64 checksum.
+    '''
+
+    with open(file, 'rb') as f:
+        file_hash = xxh3_64()
+        while chunk := f.read(1024 * 1024):
+            file_hash.update(chunk)
+    return file_hash.hexdigest()
+
 def fatal_error(message):
     log.critical(f'{message}\nA log is available at {LOGS_FILE}.\n')
     input('Press Enter to end the program...')
@@ -86,9 +100,9 @@ for file in os.listdir(SETUP_DIR):
         log.info('Validating checksum...')
         checksum = get_checksum(file)
         
-        log.debug(f'{file} has checksum {checksum}')
+        log.debug(f'{file} has checksum {checksum}, expected checksum is {ISO_CHECKSUM}')
 
-        if checksum == '4b16317a11f3089090748b7eca2acbaf':
+        if checksum == ISO_CHECKSUM:
             log.info('Checksum is valid!\n')
 
             # Rename iso to the filename P3F CEP expects
