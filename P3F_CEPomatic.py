@@ -11,7 +11,7 @@ from xxhash import xxh3_64
 #os.chdir(os.path.dirname(os.path.abspath(__file__))) # Debug - set working directory to the .py file's location
 
 PROGRAM_NAME = 'CEP-o-matic'
-VERSION = '1.3'
+VERSION = '1.4'
 
 # Proper file and directory names
 SETUPDIR_NAME = Path('P3F Mods/Setup/')
