@@ -19,7 +19,7 @@ VERSION = '1.4'
 SETUPDIR_NAME = Path('P3F Mods/Setup')
 ISO_NAME = 'P3F.iso'
 SLUS_NAME = 'SLUS_216.21'
-ELF_NAME = 'SLUS_216.21.elf'
+ELF_NAME = f'{SLUS_NAME}.elf'
 
 # Disc checksum
 ISO_CHECKSUM = '94a81c7c5f0d255c'
@@ -148,14 +148,14 @@ for file in os.listdir(SETUP_DIR):
             
             # Extract SLUS
             log.info(f'Extracting {SLUS_NAME}...')
-            subprocess.check_call([TOOLS_DIR / '7z.exe', 'x', '-y', ISO_NAME, SLUS_NAME], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+            subprocess.check_call([TOOLS_DIR.joinpath('7z.exe'), 'x', '-y', ISO_NAME, SLUS_NAME], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
             # Rename SLUS to the filename P3F CEP expects
             log.info(f'Renaming {SLUS_NAME} to {ELF_NAME}...')
-            os.replace(SETUP_DIR / SLUS_NAME, ELF_NAME)
+            os.replace(SETUP_DIR.joinpath(SLUS_NAME), ELF_NAME)
 
             # Double-check and set found_iso flag
-            if os.path.exists(SETUP_DIR / ISO_NAME) and os.path.exists(SETUP_DIR / ELF_NAME):
+            if os.path.exists(SETUP_DIR.joinpath(ISO_NAME)) and os.path.exists(SETUP_DIR.joinpath(ELF_NAME)):
                 log.info('ISO and ELF files are OK!\n')
                 found_iso = True
             else:
@@ -194,7 +194,7 @@ for file in os.listdir(SETUP_DIR):
 
         # Move into memcards folder
         log.info(f'Moving memcard {file} to {MEMCARDS_DIR}...\n')
-        move(SETUP_DIR / file, MEMCARDS_DIR / file) # Using move with the exact file path overwrites existing file
+        move(SETUP_DIR.joinpath(file), MEMCARDS_DIR.joinpath(file)) # Using move with the exact file path overwrites existing file
 
 # Check flags and move files
 if found_iso == True and found_bios != 'none':
@@ -207,22 +207,22 @@ if found_iso == True and found_bios != 'none':
 
     # iso
     log.info(f'Moving {ISO_NAME} to {ISO_DIR}...')
-    move(SETUP_DIR / ISO_NAME, ISO_DIR / ISO_NAME) # Using move with the exact file path overwrites existing file
+    move(SETUP_DIR.joinpath(ISO_NAME), ISO_DIR.joinpath(ISO_NAME)) # Using move with the exact file path overwrites existing file
 
     # elf
     log.info(f'Moving {ELF_NAME} to {ELF_DIR}...')
-    move(SETUP_DIR / ELF_NAME, ELF_DIR / ELF_NAME)
+    move(SETUP_DIR.joinpath(ELF_NAME), ELF_DIR.joinpath(ELF_NAME))
 
     # bin
     if found_bios.endswith('.bin'):
         log.info(f'Moving packaged {found_bios} to {BIOS_DIR}...')
-        move(SETUP_DIR / found_bios, BIOS_DIR / found_bios)
+        move(SETUP_DIR.joinpath(found_bios), BIOS_DIR.joinpath(found_bios))
     # mec
     else:
         log.info(f'Moving loose BIOS {found_bios} to {BIOS_DIR}...')
         for movefile in os.listdir(SETUP_DIR):
             if movefile.startswith(found_bios):
-                move(SETUP_DIR / movefile, BIOS_DIR / movefile)
+                move(SETUP_DIR.joinpath(movefile), BIOS_DIR.joinpath(movefile))
                 log.debug(f'Moved {movefile}')
 else:
     if found_iso != True:
