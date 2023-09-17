@@ -95,27 +95,6 @@ def fatal_error(message):
     input('Press Enter to end the program...')
     sys.exit()
 
-def force_rename(old_name, new_name):
-    '''
-    Rename a file - if a file with the new name already exists, delete it first.
-
-    This function tries to rename a given file with a given new name.
-    If FileExistsError is caught, the existing file with the new name is deleted and the rename command is run again.
-
-    Args:
-        old_name(str/Path): The path to the file to be renamed
-        new_name(str): The new name for the file
-
-    Returns:
-        None
-    '''
-
-    try:
-        os.rename(old_name, new_name)
-    except FileExistsError:
-        os.remove(new_name)
-        os.rename(old_name, new_name)
-
 def get_checksum(file):
     '''
     Reads a file in 1MB chunks and returns its xxh3_64 checksum.
@@ -165,7 +144,7 @@ for file in os.listdir(SETUP_DIR):
             # Rename iso to the filename P3F CEP expects
             if file != ISO_NAME:
                 log.info(f'Renaming {file} to {ISO_NAME}...')
-                force_rename(file, ISO_NAME)
+                os.replace(file, ISO_NAME)
             
             # Extract SLUS
             log.info(f'Extracting {SLUS_NAME}...')
@@ -173,7 +152,7 @@ for file in os.listdir(SETUP_DIR):
 
             # Rename SLUS to the filename P3F CEP expects
             log.info(f'Renaming {SLUS_NAME} to {ELF_NAME}...')
-            force_rename(SETUP_DIR / SLUS_NAME, ELF_NAME)
+            os.replace(SETUP_DIR / SLUS_NAME, ELF_NAME)
 
             # Double-check and set found_iso flag
             if os.path.exists(SETUP_DIR / ISO_NAME) and os.path.exists(SETUP_DIR / ELF_NAME):
