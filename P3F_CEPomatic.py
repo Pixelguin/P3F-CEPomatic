@@ -2,7 +2,6 @@
 import logging
 import os
 from pathlib import Path
-from shutil import move
 import subprocess
 import sys
 import time
@@ -194,7 +193,7 @@ for file in os.listdir(SETUP_DIR):
 
         # Move into memcards folder
         log.info(f'Moving memcard {file} to {MEMCARDS_DIR}...\n')
-        move(SETUP_DIR.joinpath(file), MEMCARDS_DIR.joinpath(file)) # Using move with the exact file path overwrites existing file
+        os.replace(SETUP_DIR.joinpath(file), MEMCARDS_DIR.joinpath(file)) # os.replace "renames" the file to the new path, effectively moving it
 
 # Check flags and move files
 if found_iso == True and found_bios != 'none':
@@ -207,22 +206,22 @@ if found_iso == True and found_bios != 'none':
 
     # iso
     log.info(f'Moving {ISO_NAME} to {ISO_DIR}...')
-    move(SETUP_DIR.joinpath(ISO_NAME), ISO_DIR.joinpath(ISO_NAME)) # Using move with the exact file path overwrites existing file
+    os.replace(SETUP_DIR.joinpath(ISO_NAME), ISO_DIR.joinpath(ISO_NAME))
 
     # elf
     log.info(f'Moving {ELF_NAME} to {ELF_DIR}...')
-    move(SETUP_DIR.joinpath(ELF_NAME), ELF_DIR.joinpath(ELF_NAME))
+    os.replace(SETUP_DIR.joinpath(ELF_NAME), ELF_DIR.joinpath(ELF_NAME))
 
     # bin
     if found_bios.endswith('.bin'):
         log.info(f'Moving packaged {found_bios} to {BIOS_DIR}...')
-        move(SETUP_DIR.joinpath(found_bios), BIOS_DIR.joinpath(found_bios))
+        os.replace(SETUP_DIR.joinpath(found_bios), BIOS_DIR.joinpath(found_bios))
     # mec
     else:
         log.info(f'Moving loose BIOS {found_bios} to {BIOS_DIR}...')
         for movefile in os.listdir(SETUP_DIR):
             if movefile.startswith(found_bios):
-                move(SETUP_DIR.joinpath(movefile), BIOS_DIR.joinpath(movefile))
+                os.replace(SETUP_DIR.joinpath(movefile), BIOS_DIR.joinpath(movefile))
                 log.debug(f'Moved {movefile}')
 else:
     if found_iso != True:
