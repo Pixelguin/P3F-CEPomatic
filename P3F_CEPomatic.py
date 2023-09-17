@@ -1,9 +1,11 @@
 # Native libraries
-import logging, os, subprocess
+import logging
+import os
 from pathlib import Path
 from shutil import move
-from sys import exit
-from time import strftime
+import subprocess
+import sys
+import time
 
 # External libraries
 from xxhash import xxh3_64
@@ -27,7 +29,7 @@ SETUP_DIR = Path(os.getcwd())
 TOOLS_DIR = SETUP_DIR / 'dependencies'
 
 LOGS_DIR = SETUP_DIR.parents[0] / 'Logs/'
-LOGS_FILE = LOGS_DIR / f"CEPomaticLog_{strftime('%Y%m%d-%H%M%S')}.txt"
+LOGS_FILE = LOGS_DIR / f"CEPomaticLog_{time.strftime('%Y%m%d-%H%M%S')}.txt"
 
 FILES_DIR = SETUP_DIR.parents[0] / 'Files/'
 ISO_DIR = FILES_DIR / 'iso/'
@@ -40,6 +42,7 @@ log = logging.getLogger('logger')
 log.setLevel(logging.DEBUG)
 
 file_formatter = logging.Formatter('>%(levelname)-10s %(message)s') # Show level in log file but not console
+file_formatter.fill = 20
 console_formatter = logging.Formatter('%(message)s')
 
 file_handler = logging.FileHandler(LOGS_FILE, mode = 'w', encoding = 'utf-8')
@@ -75,7 +78,7 @@ def fatal_error(message):
         
     log.critical(f'{message}\nA log is available at {LOGS_FILE}.\n')
     input('Press Enter to end the program...')
-    exit()
+    sys.exit()
 
 def force_rename(old_name, new_name):
     '''
@@ -237,4 +240,4 @@ else:
 # Finished
 log.info('\nAll finished!')
 input('Press Enter to end the program...')
-exit()
+sys.exit()
