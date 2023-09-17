@@ -59,18 +59,31 @@ class MultilineIndentFormatter(logging.Formatter):
 file_formatter = MultilineIndentFormatter(f'>%(levelname)-{LOG_FILE_INDENT}s%(message)s') # Show level in log file but not console
 console_formatter = logging.Formatter('%(message)s')
 
-file_handler = logging.FileHandler(LOGS_FILE, mode = 'w', encoding = 'utf-8')
-file_handler.setLevel(logging.DEBUG)
-file_handler.setFormatter(file_formatter)
-log.addHandler(file_handler)
+# Attempt to create log file and check if executable is in the right place
+try:
+    file_handler = logging.FileHandler(LOGS_FILE, mode = 'w', encoding = 'utf-8')
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(file_formatter)
+    log.addHandler(file_handler)
+
+    # First log message
+    log.debug(f'Created {LOGS_FILE}')
+    log.debug(f'{PROGRAM_NAME} is in {SETUP_DIR}\n')
+
+except:
+    if not SETUP_DIR.parents[1].joinpath(SETUPDIR_NAME) == SETUP_DIR:
+        print(f'It looks like {PROGRAM_NAME} isn\'t in the correct directory.')
+    else:
+        print('Error trying to create or write to the log.')
+
+    print(f'Make sure this executable is in your {SETUPDIR_NAME} folder.\n')
+    input('Press Enter to end the program...')
+    sys.exit()
 
 console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.INFO)
 console_handler.setFormatter(console_formatter)
 log.addHandler(console_handler)
-
-# First log message
-log.debug(f'Created {LOGS_FILE}\n')
 
 # Set flags
 found_iso = False
@@ -119,11 +132,6 @@ def get_checksum(file):
 PROGRAM START
 '''
 log.info(f'P3F {PROGRAM_NAME} {VERSION}\nby Pixelguin\n')
-
-# Check if executable is in the right place
-log.debug(f'{PROGRAM_NAME} is in {SETUP_DIR}')
-if not SETUP_DIR.parents[1].joinpath(SETUPDIR_NAME) == SETUP_DIR:
-    fatal_error(f'It looks like {PROGRAM_NAME} isn\'t in the correct directory.\nMake sure this executable is in your {SETUPDIR_NAME} folder.\n')
 
 # Scan for files
 for file in os.listdir(SETUP_DIR):
