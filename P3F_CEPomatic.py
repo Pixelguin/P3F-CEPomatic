@@ -16,7 +16,7 @@ PROGRAM_NAME = 'CEP-o-matic'
 VERSION = '1.4'
 
 # Proper file and directory names
-SETUPDIR_NAME = Path('P3F Mods/Setup/')
+SETUPDIR_NAME = Path('P3F Mods/Setup')
 ISO_NAME = 'P3F.iso'
 SLUS_NAME = 'SLUS_216.21'
 ELF_NAME = 'SLUS_216.21.elf'
@@ -26,16 +26,16 @@ ISO_CHECKSUM = '94a81c7c5f0d255c'
 
 # Set directory paths
 SETUP_DIR = Path(os.getcwd())
-TOOLS_DIR = SETUP_DIR / 'dependencies'
+TOOLS_DIR = SETUP_DIR.joinpath('dependencies')
 
-LOGS_DIR = SETUP_DIR.parents[0] / 'Logs/'
-LOGS_FILE = LOGS_DIR / f"CEPomaticLog_{time.strftime('%Y%m%d-%H%M%S')}.txt"
+LOGS_DIR = SETUP_DIR.parents[0].joinpath('Logs')
+LOGS_FILE = LOGS_DIR.joinpath(f"CEPomaticLog_{time.strftime('%Y%m%d-%H%M%S')}.txt")
 
-FILES_DIR = SETUP_DIR.parents[0] / 'Files/'
-ISO_DIR = FILES_DIR / 'iso/'
-ELF_DIR = FILES_DIR / 'elf/'
-BIOS_DIR = FILES_DIR / 'bios/'
-MEMCARDS_DIR = FILES_DIR / 'memcards/'
+FILES_DIR = SETUP_DIR.parents[0].joinpath('Files')
+ISO_DIR = FILES_DIR.joinpath('iso')
+ELF_DIR = FILES_DIR.joinpath('elf')
+BIOS_DIR = FILES_DIR.joinpath('bios')
+MEMCARDS_DIR = FILES_DIR.joinpath('memcards')
 
 # Create logger
 LOG_FILE_INDENT = 11
@@ -123,7 +123,7 @@ log.info(f'P3F {PROGRAM_NAME} {VERSION}\nby Pixelguin\n')
 
 # Check if executable is in the right place
 log.debug(f'{PROGRAM_NAME} is in {SETUP_DIR}')
-if not SETUP_DIR.parents[1] / SETUPDIR_NAME == SETUP_DIR:
+if not SETUP_DIR.parents[1].joinpath(SETUPDIR_NAME) == SETUP_DIR:
     fatal_error(f'It looks like {PROGRAM_NAME} isn\'t in the correct directory.\nMake sure this executable is in your {SETUPDIR_NAME} folder.\n')
 
 # Scan for files
@@ -148,7 +148,7 @@ for file in os.listdir(SETUP_DIR):
             
             # Extract SLUS
             log.info(f'Extracting {SLUS_NAME}...')
-            subprocess.check_call([TOOLS_DIR / f'7z.exe', 'x', '-y', ISO_NAME, SLUS_NAME], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+            subprocess.check_call([TOOLS_DIR / '7z.exe', 'x', '-y', ISO_NAME, SLUS_NAME], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
             # Rename SLUS to the filename P3F CEP expects
             log.info(f'Renaming {SLUS_NAME} to {ELF_NAME}...')
